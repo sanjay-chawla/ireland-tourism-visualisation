@@ -152,16 +152,12 @@ $(document).ready(function(){
         allPartData = Array.from(reducedData)
 
         var mapRatio = 1;
-        var svg = d3.select("svg")
+        var svg = d3.select(".map")
         width = svg._groups[0][0].clientWidth
         height = width * mapRatio
         svg.attr("preserveAspectRatio", "xMinYMin")
         .attr("width", width)
         .attr("height", height)
-        .style('transform-origin', vw/2 + 'px ' + vh/4 + 'px')
-        .on('hover', function () {
-            d3.select(this).call(drag)
-        })
         var rotation = d3.geoRotation([-11, 0])
         var projection = d3.geoMercator()
             .scale(width / 3 / Math.PI)
@@ -190,27 +186,25 @@ $(document).ready(function(){
         var colorScale = d3.scaleOrdinal()
             .domain(Array.from(sets.map(d => d.code)))
             .range(d3.schemeDark2);
-        console.log(colorScale("eur"))
-        console.log(colorScale("usa"))
-        //console.log(allPartData[7][1])
+        console.log(allPartData[7][1])
         var x = d3.rollups(
             allPartData[7][1],
             xs => d3.mean(xs, x => x[1].durationOfStay),
-            d => d.code
+            d => d.region
           )
         var averageStay = x[0][1]
 
         x = d3.rollups(
             allPartData[7][1],
             xs => d3.sum(xs, x => x[1].numberOfVisitors),
-            d => d.code
+            d => d.region
           )
         var totalNumberOfVistors = x[0][1]
 
         var x = d3.rollups(
             allPartData[7][1],
             xs => d3.mean(xs, x => x[1].expenditure),
-            d => d.code
+            d => d.region
           )
         var averageExpenditure = x[0][1]
         document.querySelector('.regionLegend').innerText = 'Worldwide';
@@ -359,10 +353,10 @@ $(document).ready(function(){
         });
         // legend
         var valuesToShow = [1000,4000]
-        var angleValuesToShow = [4, 12]
-        var expenditureValuesToShow = [1000, 5000]
+        var angleValuesToShow = [4, 8]
+        var expenditureValuesToShow = [1000, 2000]
         var expenditureScaleAngle = 7*Math.PI/4
-        var xCircle = [120, 50]
+        var xCircle = [110, 40]
         var xLabel = 150
         var legendPosition = height/1.5
 
@@ -431,7 +425,17 @@ $(document).ready(function(){
             .attr('stroke', 'orange')
             .style('stroke-dasharray', ('2,1'))
 
-
+        svg
+        .selectAll("legend")
+        .data(expenditureValuesToShow)
+        .enter()
+        .append("line")
+            .attr('x1', xLabel )
+            .attr('y1', function(d,i){ return legendPosition - size(valuesToShow[i]) + expenditureScale(d)*Math.sin(expenditureScaleAngle)})
+            .attr('x2', function(d,i){ return xCircle[i] - Math.cos(expenditureScaleAngle)*expenditureScale(d)})
+            .attr('y2', function(d,i){ return legendPosition - size(valuesToShow[i]) + expenditureScale(d)*Math.sin(expenditureScaleAngle)})
+            .attr('stroke', 'orange')
+            .style('stroke-dasharray', ('2,1'))
         // Add legend: labels
         svg
           .selectAll("legend")
@@ -440,7 +444,7 @@ $(document).ready(function(){
           .append("text")
             .attr('x', xLabel + 5)
             .attr('y', function(d){ return legendPosition - 2*size(d) } )
-            .text( function(d){ return (d*1000).toLocaleString()} )
+            .text( function(d){ return (d*1000).toLocaleString() + ' trips'} )
             .style("font-size", 10)
             .style('font-color', 'orange')
             .attr('alignment-baseline', 'middle')
@@ -453,6 +457,21 @@ $(document).ready(function(){
             .attr('x', xLabel + 5)
             .attr('y', function(d,i){ return (legendPosition - size(valuesToShow[i]) - size(valuesToShow[i])*Math.cos(strokeLength(d))) } )
             .text( function(d){ return d+' Nights'} )
+            .style("font-size", 10)
+            .style('font-color', 'orange')
+            .attr('alignment-baseline', 'middle')
+
+        svg
+          .selectAll("legend")
+          .data(expenditureValuesToShow)
+          .enter()
+          .append("text")
+            .attr('x', xLabel + 5)
+            .attr('y', function(d,i){ return legendPosition - size(valuesToShow[i]) + expenditureScale(d)*Math.sin(expenditureScaleAngle)})
+            .text( function(d,i){ 
+                var prefix = i==0? "Worldwide average ": "Area average "
+                return '\u20AC ' + d.toLocaleString()+'M'
+            })
             .style("font-size", 10)
             .style('font-color', 'orange')
             .attr('alignment-baseline', 'middle')

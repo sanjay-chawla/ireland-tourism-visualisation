@@ -1,8 +1,7 @@
 .content {
   display: grid;
   border: grey 1px solid;
-  grid-template-columns: auto max-content;
-  grid-template-rows: 10% auto;
+  grid-row: 20% 15% max-content
   padding: 10px;
   margin: 10px;
 }
@@ -12,23 +11,52 @@
         stroke: #black;
         stroke-width: 0.5px;
     }
-.legend {
-    grid-column: 2;
+
+.heading {
+  grid-column: 1;
     grid-row: 1;
-    height: 10px;
     color: 'grey';
     text-align: center;
 }
-.worldmap {
-    grid-column: 2;
+.maplegend {
+    grid-column: 1;
     grid-row: 2;
+    color: 'grey';
+    text-align: center;
+}
+.reasonChartLegend {
+  grid-column: 1;
+  grid-row: 6;
+  color: 'grey';
+  text-align: center;
+}
+.worldmap {
+    grid-column: 1;
+    grid-row: 3 / span 3;
+    text-align: center;
 }
 
-.map:hover {
-  transform: scale(1.5);
+.reason {
+  text-align: center;
 }
-.map {
+
+
+text, h1, .maplegend, .reasonChartLegend {
+  font-family: 'Oswald', sans-serif;
+}
+
+
+
+.map:hover {
+  transform: scale(1.7);
+}
+.reasonSvg:hover {
+  transform: scale(1.2);
+}
+.map, .reasonSvg {
   transition: all 1s;
+  transform-origin: 50% 10%; 
+  overflow-x: overlay;
 }
 
 .regions {
@@ -51,3 +79,10 @@
   fill: yellow;
 }
 
+.slice:hover {
+  opacity: 0.9;
+}
+.slice {
+  transition: all 0.2s ease;
+  overflow-x: overlay;
+}
