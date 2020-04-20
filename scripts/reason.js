@@ -36,7 +36,7 @@ $(document).ready(function(){
         height = width
         margin = 40
         
-    var reasonForJourney2019 = d3.csv("/data/reasonThisYear.csv", function(d) {
+    var reasonForJourney2019 = d3.csv("data/reasonThisYear.csv", function(d) {
     	if (d.Category != Reasons.ALL) {
     		return {
                 year : +d.Year,
